@@ -1,6 +1,8 @@
-package com.lmm.securityplus.config.utils;
+package com.lmm.securityplus.config.security;
 
 
+import com.lmm.securityplus.entity.Menu;
+import com.lmm.securityplus.entity.Role;
 import com.lmm.securityplus.mapper.MenuMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @Author: Galen
@@ -28,6 +31,8 @@ public class MyFilterInvocationSecurityMetadataSource implements FilterInvocatio
     @Autowired
     private MenuMapper mapper;
 
+
+
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
 
@@ -42,21 +47,26 @@ public class MyFilterInvocationSecurityMetadataSource implements FilterInvocatio
     @Override
     public Collection<ConfigAttribute> getAttributes(Object o) {
         String requestUrl = ((FilterInvocation) o).getRequestUrl();
-        antPathMatcher.match("","");
+        if (antPathMatcher.match("/login*",requestUrl)) {
+            return null;
+        }
+        if (antPathMatcher.match("/user/export*",requestUrl)) {
+            return null;
+        }
         //去数据库查询资源
-//        List<Menu> allMenu = menuService.getAllMenu();
-//        for (Menu menu : allMenu) {
-//            if (antPathMatcher.match(menu.getUrl(), requestUrl){
-//                    && menu.getRoles().size() > 0) {
-//                List<Role> roles = menu.getRoles();
-//                int size = roles.size();
-//                String[] values = new String[size];
-//                for (int i = 0; i < size; i++) {
-//                    values[i] = roles.get(i).getName();
-//                }
-//
-//                return SecurityConfig.createList(values);
-//}
+        List<Menu> allMenu = mapper.selectList(null);
+        for (Menu menu : allMenu) {
+            if (antPathMatcher.match(menu.getUrl(), requestUrl)
+                    && mapper.getRoles(menu.getId()).size() > 0) {
+                List<Role> roles = mapper.getRoles(menu.getId());
+                int size = roles.size();
+                String[] values = new String[size];
+                for (int i = 0; i < size; i++) {
+                    values[i] = roles.get(i).getName();
+                }
+
+                return SecurityConfig.createList(values);
+}}
         /**
          * @Author: Galen
          * @Description: 如果本方法返回null的话，意味着当前这个请求不需要任何角色就能访问

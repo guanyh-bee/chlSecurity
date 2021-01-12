@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lmm.securityplus.mapper.UserMapper" >
+
+    <resultMap id="userVO" type="com.lmm.securityplus.VO.UserVO">
+        <id column="id" property="id"></id>
+        <result column="username" property="username"></result>
+        <result column="password" property="password"></result>
+        <result column="department_name" property="department"></result>
+        <result column="deleted" property="deleted"></result>
+        <result column="job_number" property="jobNumber"></result>
+
+        <collection property="authority" ofType="java.lang.String">
+            <constructor>
+                <arg column="name" ></arg>
+            </constructor>
+        </collection>
+    </resultMap>
+
+    <select id="getDetailByName" resultMap="userVO">
+        select u1.id ,u1.job_number,u1.deleted, u1.username,u1.password,u3.name,u4.department_name  from user u1 left join  user_role u2 on u1.id=u2.user_id left join role u3 on
+    u2.role_id = u3.id left join department u4 on u1.department_id = u4.id  where u1.username=#{name}
+    </select>
+
+    <select id="findId" resultType="int">
+        select id from user where username=#{name}
+    </select>
+
+    <select id="findByName" resultType="com.lmm.securityplus.VO.UserVORole">
+        select * from user u join user_role r on u.id=r.user_id
+    </select>
+</mapper>

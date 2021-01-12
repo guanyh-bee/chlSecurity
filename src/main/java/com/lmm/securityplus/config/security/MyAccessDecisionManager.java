@@ -1,4 +1,4 @@
-package com.lmm.securityplus.config.utils;
+package com.lmm.securityplus.config.security;
 
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lmm.securityplus.mapper.MenuMapper">
+    <select id="getRoles" resultType="com.lmm.securityplus.entity.Role">
+        select m3.name from menu m1 join role_menu m2 on m1.id=m2.menu_id join role m3 on m2.role_id=m3.id where m1.id=#{id}
+    </select>
+</mapper>

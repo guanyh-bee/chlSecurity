@@ -4,33 +4,22 @@ package com.lmm.securityplus.service;/*
  */
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.lmm.securityplus.entity.RoleMenu;
 import com.lmm.securityplus.entity.User;
-import com.lmm.securityplus.entity.UserRole;
-import com.lmm.securityplus.mapper.RoleMapper;
-import com.lmm.securityplus.mapper.RoleMenuMapper;
+import com.lmm.securityplus.VO.UserVO;
 import com.lmm.securityplus.mapper.UserMapper;
-import com.lmm.securityplus.mapper.UserRoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class MyUserDetailService implements UserDetailsService {
 
     @Autowired
     private UserMapper userMapper;
-    @Autowired
-    private UserRoleMapper userRoleMapper;
-    @Autowired
-    private RoleMenuMapper roleMenuMapper;
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -53,13 +42,11 @@ public class MyUserDetailService implements UserDetailsService {
 
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username", username);
-        User user = userMapper.selectOne(queryWrapper);
+        UserVO user = userMapper.getDetailByName(username);
         if (user == null) {
             throw new UsernameNotFoundException("用户不存在");
         }
-        String encode = new BCryptPasswordEncoder().encode(user.getPassword());
-        return new org.springframework.security.core.userdetails
-                .User(user.getUsername(), user.getPassword(), AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_admin"));
+        return user;
     }
 
 
